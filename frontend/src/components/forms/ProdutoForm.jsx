@@ -2,8 +2,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button, Box, InputLabel } from '@mui/material';
 import { PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import PageLayout from "../components/common/PageLayout";
-import { useValidationRules } from '../hooks/useValidationRules';
+import PageLayout from "../common/PageLayout";
+import { useValidationRules } from '../../hooks/useValidationRules';
 const ProdutoForm = () => {
 const { control, handleSubmit, formState: { errors } } = useForm();
 const validationRules = useValidationRules();

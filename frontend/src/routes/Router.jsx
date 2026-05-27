@@ -7,14 +7,18 @@ import RestrictedRoute from "./RestrictedRoute";
 // Os componentes das páginas são carregados de forma assíncrona usando React.lazy.
 // Suspense + lazy() dividem o código em chunks separados, melhorando o desempenho.
 const Dashboard = lazy(() => import("../pages/Dashboard"));
-//const FuncionarioList = lazy(() => import("../pages/FuncionarioList"));
-//const FuncionarioForm = lazy(() => import("../pages/FuncionarioForm"));
-//const ClienteList = lazy(() => import("../pages/ClienteList"));
-//const ClienteForm = lazy(() => import("../pages/ClienteForm"));
+const FuncionarioList = lazy(() => import("../pages/FuncionarioList"));
+const FuncionarioForm = lazy(() => import("../components/forms/FuncionarioForm"));
+const ClienteList = lazy(() => import("../pages/ClienteList"));
+const ClienteForm = lazy(() => import("../components/forms/ClienteForm"));
 const ProdutoList = lazy(() => import("../pages/ProdutoList"));
-const ProdutoForm = lazy(() => import("../pages/ProdutoForm"));
+const ProdutoForm = lazy(() => import("../components/forms/ProdutoForm"));
 const LoginForm = lazy(() => import("../components/forms/LoginForm"));
 const NotFound = lazy(() => import("../pages/NotFound"));
+const ComandaList = lazy(() => import("../pages/ComandaList"));
+const ComandaForm = lazy(() => import("../components/forms/ComandaForm"));
+const PerfilPage = lazy(() => import("../pages/PerfilPage"));
+const PerfilForm = lazy(() => import("../components/forms/PerfilForm"));
 // Loader para o Suspense - melhora a experiência do usuário em aplicações maiores.
 // Sempre que uma rota for acessada, o Suspense exibirá o fallback (Carregando...) até que o componente da rota seja carregado.
 const Loading = () => <div>Carregando...</div>;
@@ -36,12 +40,16 @@ return (
 <Route path="/home" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
 <Route path="/produtos" element={<PrivateRoute><ProdutoList /></PrivateRoute>} />
 <Route path="/produto" element={<PrivateRoute><ProdutoForm /></PrivateRoute>} />
+<Route path="/comandas" element={<PrivateRoute><ComandaList /></PrivateRoute>} />
+<Route path="/comanda" element={<PrivateRoute><ComandaForm /></PrivateRoute>} />
+<Route path="/perfil" element={<PrivateRoute><PerfilPage /></PrivateRoute>} />
+<Route path="/perfil/editar" element={<PrivateRoute><PerfilForm /></PrivateRoute>} />
 {/* Rotas para funcionário (comentadas) */}
-{/* <Route path="/funcionarios" element={<PrivateRoute><FuncionarioList /></PrivateRoute>} /> */}
-{/* <Route path="/funcionario" element={<PrivateRoute><FuncionarioForm /></PrivateRoute>} /> */}
+<Route path="/funcionarios" element={<PrivateRoute><FuncionarioList /></PrivateRoute>} /> 
+<Route path="/funcionario" element={<PrivateRoute><FuncionarioForm /></PrivateRoute>} /> 
 {/* Rotas para cliente (comentadas) */}
-{/* <Route path="/clientes" element={<PrivateRoute><ClienteList /></PrivateRoute>} /> */}
-{/* <Route path="/cliente" element={<PrivateRoute><ClienteForm /></PrivateRoute>} /> */}
+<Route path="/clientes" element={<PrivateRoute><ClienteList /></PrivateRoute>} />
+<Route path="/cliente" element={<PrivateRoute><ClienteForm /></PrivateRoute>} />
 {/* Rota para páginas não encontradas */}
 <Route path="*" element={<NotFound />} />
 </Routes>
