@@ -35,23 +35,16 @@ import fotoPerfil from "../../assets/roberto.jpg";
 
 const Navbar = () => {
 
-// useNavigate é um hook do React Router que permite programaticamente navegar entre rotas
 const navigate = useNavigate();
 
-// useAuth é um hook personalizado que fornece acesso ao contexto de autenticação
-// logout é uma função que realiza o logout do usuário
-// isAuthenticated é um booleano que indica se o usuário está autenticado ou não
-const { isAuthenticated, logout } = useAuth();
+const { isAuthenticated, logout, user } = useAuth();
 
-// Estado para controlar a abertura do drawer mobile
 const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-// Chama a função de logout do contexto de autenticação
 const handleLogout = () => {
 logout();
 };
 
-// Itens do menu com ícones e rotas
 const menuItems = [
 { label: 'Dashboard', icon: <Dashboard />, path: '/home' },
 { label: 'Funcionários', icon: <People />, path: '/funcionarios' },
@@ -65,18 +58,25 @@ const handleDrawerToggle = () => {
 setMobileDrawerOpen(!mobileDrawerOpen);
 };
 
-// Componente do drawer mobile
+const renderAvatar = () => (
+<Avatar
+src={fotoPerfil}
+alt={user?.nome || "Perfil"}
+sx={{
+width: 32,
+height: 32,
+border: '2px solid rgba(255,255,255,0.2)'
+}}
+>
+{user?.nome ? user.nome.charAt(0).toUpperCase() : <AccountCircle />}
+</Avatar>
+);
+
 const drawer = (
 <Box onClick={handleDrawerToggle} sx={{ textAlign: 'left', width: 250 }}>
 
 <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
-<Typography
-variant="h6"
-sx={{
-color: 'primary.main',
-fontWeight: 600
-}}
->
+<Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 600 }}>
 Menu
 </Typography>
 </Box>
@@ -96,12 +96,10 @@ backgroundColor: 'rgba(255, 255, 255, 0.08)'
 <ListItemIcon sx={{ color: 'inherit' }}>
 {item.icon}
 </ListItemIcon>
-
 <ListItemText primary={item.label} />
 </ListItem>
 ))}
 
-{/* Perfil */}
 <ListItem
 onClick={() => navigate('/perfil')}
 sx={{
@@ -114,10 +112,8 @@ backgroundColor: 'rgba(255, 255, 255, 0.08)'
 <ListItemIcon sx={{ color: 'inherit' }}>
 <AccountCircle />
 </ListItemIcon>
-
 <ListItemText primary="Perfil" />
 </ListItem>
-
 </List>
 
 <Divider />
@@ -135,18 +131,13 @@ backgroundColor: 'rgba(239, 68, 68, 0.08)'
 <ListItemIcon sx={{ color: 'error.main' }}>
 <Logout />
 </ListItemIcon>
-
-<ListItemText
-primary="Sair"
-sx={{ color: 'error.main' }}
-/>
+<ListItemText primary="Sair" sx={{ color: 'error.main' }} />
 </ListItem>
 </List>
 
 </Box>
 );
 
-// Componente do navbar
 return (
 <AppBar position="sticky" elevation={2}>
 
@@ -169,13 +160,7 @@ gap: 1,
 fontSize: { xs: '1.2rem', sm: '1.5rem' }
 }}
 >
-
-<RestaurantMenu
-sx={{
-color: '#f59e0b',
-fontSize: { xs: '1.5rem', sm: '2rem' }
-}}
-/>
+<RestaurantMenu sx={{ color: '#f59e0b', fontSize: { xs: '1.5rem', sm: '2rem' } }} />
 
 <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
 Comandas do Zé
@@ -184,7 +169,6 @@ Comandas do Zé
 <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
 Zé
 </Box>
-
 </Typography>
 
 </Box>
@@ -193,19 +177,10 @@ Zé
 
 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 
-{/* Menu Desktop */}
-<Box
-sx={{
-display: { xs: 'none', sm: 'flex' },
-alignItems: 'center',
-gap: 1
-}}
->
+<Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
 
 {menuItems.map((item) => (
-
 <Tooltip key={item.path} title={item.label} arrow>
-
 <Button
 color="inherit"
 onClick={() => navigate(item.path)}
@@ -221,46 +196,22 @@ backgroundColor: 'rgba(255, 255, 255, 0.1)'
 }
 }}
 >
-
 {item.icon}
 
 <Typography variant="body2" sx={{ ml: 0.5 }}>
 {item.label}
 </Typography>
-
 </Button>
-
 </Tooltip>
-
 ))}
 
-{/* Perfil */}
-<Tooltip title="Perfil" arrow>
-
-<IconButton
-color="inherit"
-onClick={() => navigate('/perfil')}
->
-
-<Avatar
-src={fotoPerfil}
-alt="Perfil"
-sx={{
-width: 32,
-height: 32,
-border: '2px solid rgba(255,255,255,0.2)'
-}}
->
-<AccountCircle />
-</Avatar>
-
+<Tooltip title={user?.nome || "Perfil"} arrow>
+<IconButton color="inherit" onClick={() => navigate('/perfil')}>
+{renderAvatar()}
 </IconButton>
-
 </Tooltip>
 
-{/* Logout */}
 <Tooltip title="Sair" arrow>
-
 <IconButton
 color="inherit"
 onClick={handleLogout}
@@ -272,41 +223,16 @@ backgroundColor: 'rgba(239, 68, 68, 0.1)'
 >
 <Logout />
 </IconButton>
-
 </Tooltip>
 
 </Box>
 
-{/* Menu Mobile */}
-<Box
-sx={{
-display: { xs: 'flex', sm: 'none' },
-alignItems: 'center',
-gap: 1
-}}
->
+<Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', gap: 1 }}>
 
-<Tooltip title="Perfil" arrow>
-
-<IconButton
-color="inherit"
-onClick={() => navigate('/perfil')}
->
-
-<Avatar
-src={fotoPerfil}
-alt="Perfil"
-sx={{
-width: 32,
-height: 32,
-border: '2px solid rgba(255,255,255,0.2)'
-}}
->
-<AccountCircle />
-</Avatar>
-
+<Tooltip title={user?.nome || "Perfil"} arrow>
+<IconButton color="inherit" onClick={() => navigate('/perfil')}>
+{renderAvatar()}
 </IconButton>
-
 </Tooltip>
 
 <IconButton
@@ -329,7 +255,6 @@ backgroundColor: 'rgba(255, 255, 255, 0.1)'
 
 </Toolbar>
 
-{/* Drawer Mobile */}
 <Drawer
 variant="temporary"
 open={mobileDrawerOpen}

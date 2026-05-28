@@ -1,27 +1,42 @@
 import { Avatar, Box, Button, Card, CardContent, Divider, Grid, Typography, Chip } from '@mui/material';
-import { Edit, Badge, Phone, Person, AdminPanelSettings } from '@mui/icons-material';
+import { Edit, Badge, Phone, Person, AdminPanelSettings, Work } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/AuthContext";
 import PageLayout from "../components/common/PageLayout";
 import fotoPerfil from "../assets/roberto.jpg";
+import { getGrupoInfo } from "../constants/userGroups";
 
 function PerfilPage() {
 const navigate = useNavigate();
+const { user, loading } = useAuth();
 
-const funcionario = {
-id: 1,
-nome: "Roberto Souza",
-matricula: "MAT001",
-cpf: "123.456.789-00",
-telefone: "(49) 99999-9999",
-grupo: 1
+if (loading) {
+return (
+<PageLayout title="Meu Perfil">
+<Typography>Carregando perfil...</Typography>
+</PageLayout>
+);
+}
+
+if (!user) {
+return (
+<PageLayout title="Meu Perfil">
+<Typography>Não foi possível carregar os dados do usuário.</Typography>
+</PageLayout>
+);
+}
+
+const formatarCpf = (cpf) => {
+if (!cpf) return "Não informado";
+return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
-const getGrupoLabel = (grupo) => {
-if (grupo === 1) return "Administrador";
-if (grupo === 2) return "Funcionário";
-if (grupo === 3) return "Atendente";
-return "Usuário";
+const formatarTelefone = (telefone) => {
+if (!telefone) return "Não informado";
+return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
 };
+
+const grupoInfo = getGrupoInfo(user?.grupo);
 
 const actions = (
 <Button
@@ -41,9 +56,10 @@ return (
 <Grid item xs={12} md={4}>
 <Card sx={{ borderRadius: 3, textAlign: 'center' }}>
 <CardContent sx={{ p: 4 }}>
+
 <Avatar
 src={fotoPerfil}
-alt={funcionario.nome}
+alt={user.nome}
 sx={{
 width: 120,
 height: 120,
@@ -51,26 +67,28 @@ mx: 'auto',
 mb: 2,
 border: '4px solid',
 borderColor: 'primary.main',
-boxShadow: 3
+boxShadow: 3,
+fontSize: 42
 }}
 >
-{funcionario.nome.charAt(0)}
+{user?.nome ? user.nome.charAt(0).toUpperCase() : <Person />}
 </Avatar>
 
 <Typography variant="h5" sx={{ fontWeight: 700 }}>
-{funcionario.nome}
+{user.nome}
 </Typography>
 
 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-Matrícula: {funcionario.matricula}
+Matrícula: {user.matricula || "Não informada"}
 </Typography>
 
 <Chip
-label={getGrupoLabel(funcionario.grupo)}
-color="primary"
+label={grupoInfo.label}
+color={grupoInfo.color}
 icon={<AdminPanelSettings />}
 sx={{ fontWeight: 600 }}
 />
+
 </CardContent>
 </Card>
 </Grid>
@@ -78,6 +96,7 @@ sx={{ fontWeight: 600 }}
 <Grid item xs={12} md={8}>
 <Card sx={{ borderRadius: 3 }}>
 <CardContent sx={{ p: 3 }}>
+
 <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
 Informações do Usuário
 </Typography>
@@ -91,7 +110,7 @@ Informações do Usuário
 Nome
 </Typography>
 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-{funcionario.nome}
+{user.nome || "Não informado"}
 </Typography>
 </Box>
 </Box>
@@ -103,7 +122,7 @@ Nome
 CPF
 </Typography>
 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-{funcionario.cpf}
+{formatarCpf(user.cpf)}
 </Typography>
 </Box>
 </Box>
@@ -115,7 +134,19 @@ CPF
 Telefone
 </Typography>
 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-{funcionario.telefone}
+{formatarTelefone(user.telefone)}
+</Typography>
+</Box>
+</Box>
+
+<Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+<Work sx={{ mr: 2, color: 'primary.main' }} />
+<Box>
+<Typography variant="body2" color="text.secondary">
+Matrícula
+</Typography>
+<Typography variant="body1" sx={{ fontWeight: 600 }}>
+{user.matricula || "Não informada"}
 </Typography>
 </Box>
 </Box>
@@ -127,7 +158,7 @@ Telefone
 Grupo de Acesso
 </Typography>
 <Typography variant="body1" sx={{ fontWeight: 600 }}>
-{getGrupoLabel(funcionario.grupo)}
+{grupoInfo.label}
 </Typography>
 </Box>
 </Box>
